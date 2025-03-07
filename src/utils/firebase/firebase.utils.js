@@ -3,9 +3,11 @@ import {
   getAuth,
   signInWithRedirect,
   signInWithEmailAndPassword,
+  signOut,
   signInWithPopup,
   GoogleAuthProvider,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
 } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -27,7 +29,12 @@ provider.setCustomParameters({
   prompt: 'select_account',
 });
 
-export const auth = getAuth();
+// the auth 'singleton' object's purpose is to provide the authentication service to the app
+// it does this by calling the getAuth() method from the firebase/auth module
+// the auth object is then used to sign in with google popup
+// the auth object is also used to sign out
+// the object is also used to listen for changes in the authentication state
+export const auth = getAuth();  
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
 
 export const db = getFirestore();
@@ -63,7 +70,6 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
   return userDocRef;
 };
 
-
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
 
@@ -79,3 +85,7 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   return user;
   
 };
+
+export const signOutUser = async () => await signOut(auth);
+
+export const onAuthStateChangedListener = (callback) => onAuthStateChanged(auth, callback);

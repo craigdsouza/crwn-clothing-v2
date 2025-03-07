@@ -3,26 +3,21 @@ import {
     createUserDocumentFromAuth,
     signInAuthUserWithEmailAndPassword,
   } from '../../utils/firebase/firebase.utils';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Button from '../../components/button/button.component';
 import FormInput from '../../components/form-input/form-input.component';
 import './sign-in-form.styles.scss';
-  
+import { UserContext } from '../../contexts/user.context';
   
   const SignInForm = () => {
     const [formFields, setFormFields] = useState({ email: "", password: "" });
     const { email, password } = formFields;
-  
-    console.log(formFields);
-  
+    
     const handleSubmit = async (event) => {
       event.preventDefault();
   
       try {
         const user = await signInAuthUserWithEmailAndPassword(email, password);
-        console.log("user",user);
-        const userDocRef = await createUserDocumentFromAuth(user);
-        console.log("userDocRef",userDocRef);
         setFormFields({ email: "", password: "" });
       } catch (error) {
           switch (error.code) {
@@ -45,7 +40,7 @@ import './sign-in-form.styles.scss';
   
     const logGoogleUser = async () => {
       const { user } = await signInWithGooglePopup();
-      const userDocRef = await createUserDocumentFromAuth(user);
+      createUserDocumentFromAuth(user);
     };
   
     return (
